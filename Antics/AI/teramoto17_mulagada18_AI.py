@@ -12,6 +12,25 @@ from AIPlayerUtils import *
 
 
 ##
+#Gene
+#Description: Defines a gene
+#
+#Variables:
+#   newAnthill, newTunnel - tuples of the anthill and tunnel
+#   newGrass - a list of tuples where the grass will be placed
+#   newFitness - the fitness of the gene
+##
+class Gene():
+
+    def __init__(self, newAnthill, newTunnel, newGrass, newFood, newFitness = 0):
+        self.anthill = newAnthill
+        self.tunnel = newTunnel
+        self.grass = newGrass
+        self.food = newFood
+        self.fitness = newFitness
+
+
+##
 #AIPlayer
 #Description: The responsbility of this class is to interact with the game by
 #deciding a valid move based on a given game state. This class has methods that
@@ -29,7 +48,17 @@ class AIPlayer(Player):
     #   inputPlayerId - The id to give the new player (int)
     ##
     def __init__(self, inputPlayerId):
-        super(AIPlayer,self).__init__(inputPlayerId, "AI Template (not implemented)")
+        super(AIPlayer,self).__init__(inputPlayerId, "Teramoto17_Mulagada18 AI")
+
+        # A list of lists to store the current population of genes
+        self.genePopulation = []
+
+        # An index to track which gene in the population is next to be evaluated
+        self.nextGeneIdx = 0
+
+        # A second list to store the fitness of each gene in the current population
+        # self.geneFitnesses = []
+        
     
     ##
     #getPlacement
@@ -112,4 +141,43 @@ class AIPlayer(Player):
     #
     def registerWin(self, hasWon):
         #method templaste, not implemented
+        pass
+
+    ##
+    #initGenes
+    #Description: initialize the population of genes with random values and reset the
+    # fitness list to default values (set the fitness variable to 0).
+    #
+    #Parameters:
+    #   
+    #
+    def initGenes():
+        
+        pass
+
+    ##
+    #initGenes
+    #Description: take two parent genes and generate two child genes that result from
+    # the pairing. This mating should include a chance of mutation.
+    #
+    #Parameters:
+    #   gene1 - the first parent gene
+    #   gene2 - the second parent gene
+    def mateGenes(gene1, gene2):
+
+        # return 2 child genes
+        pass
+
+    ##
+    #generateNextGen
+    #Description: Generate the next generation of genes from the old one
+    #
+    #Parameters:
+    #   oldGen - a list of genes representing the old generation
+    #
+    # Return:
+    # a list of genes representing the new generation
+    def generateNextGen(oldGen):
+
+        # return a list of genes representing the new generation
         pass
