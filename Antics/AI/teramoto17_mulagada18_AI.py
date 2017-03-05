@@ -31,6 +31,9 @@ class Gene():
         self.food = newFood
         self.fitness = newFitness
 
+        # the number of games the gene has played
+        self.numGames = 0
+
 ##
 #getRandPointOnMySide()
 #Description: returns an x-y tuple of a point on my side of the board
@@ -81,6 +84,9 @@ class AIPlayer(Player):
 
         # A second list to store the fitness of each gene in the current population
         # self.geneFitnesses = []
+
+        # the number of games each gene will play for its fitness to be fully evaluated
+        self.gamesPerGene = 10
         
     
     ##
@@ -111,7 +117,7 @@ class AIPlayer(Player):
         # define the layout it returns to the game
 
         # nextGeneIdx will track which gene in the population is next to be evaluated
-        currentGene = genePopulation[nextGeneIdx]
+        currentGene = self.genePopulation[self.nextGeneIdx]
         
         # if setup phase 1, list of eleven 2-tuples of ints (anthill, tunnel, all grass)
         if currentState.phase == SETUP_PHASE_1:
@@ -191,8 +197,39 @@ class AIPlayer(Player):
     #   hasWon - True if the player has won the game, False if the player lost. (Boolean)
     #
     def registerWin(self, hasWon):
-        #method templaste, not implemented
-        pass
+        # using registerWin to manage the population
+
+        # Each time a game ends, the following actions should be performed:
+        #   - Update the fitness score of the current gene depending on whether the agent won or lost
+        #   - Judge whether the current gene's fitness has been fully evaluated.
+        #       - If so, advance to the next gene.
+        #   - If all the genes have been fully evaluated, create a new population using the fittest
+        #       ones and reset the current index to the beginning.
+
+        # I'm assuming python is assigning this by reference, not making a copy
+        currentGene = genePopulation[self.nextGeneIdx]
+
+        # Update the fitness score of the current gene depending on whether the
+        # agent has won or lost.
+        if hasWon:
+            currentGene.fitness += 10
+        else:
+            currentGene.fitness -= 10
+
+        # Judge whether the current gene's fitness has been fully evaluated.
+        # A gene's fitness has been fully evaluated if the gene has played 10 games
+        currentGene.numGames += 1
+        if currentGene.numGames == 10:
+            # the gene's fitness has been fully evaluated, so go to the next game
+            self.nextGeneIdx += 1
+
+            # if all genes have been fully evaluated,
+            if self.nextGeneIdx == size(self.genePopulation):
+                # create a new population using the fittest ones and reset the
+                # current index to the beginning
+                self.generateNextGen(self.genePopulation)
+                self.nextGeneIdx = 0
+        
 
     ##
     #initGenes
@@ -299,7 +336,9 @@ class AIPlayer(Player):
         parent2 = oldGen[1]
 
         # return a list of genes representing the new generation
-        return self.mateGenes(parent1, parent2, self.populationSize)
+        newGen = self.mateGenes(parent1, parent2, self.populationSize)
+        self.genePopulation = newGen
+        return newGen
 
 
 newPlayer = AIPlayer(0)
