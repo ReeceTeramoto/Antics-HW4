@@ -207,7 +207,7 @@ class AIPlayer(Player):
         #       ones and reset the current index to the beginning.
 
         # I'm assuming python is assigning this by reference, not making a copy
-        currentGene = genePopulation[self.nextGeneIdx]
+        currentGene = self.genePopulation[self.nextGeneIdx]
 
         # Update the fitness score of the current gene depending on whether the
         # agent has won or lost.
