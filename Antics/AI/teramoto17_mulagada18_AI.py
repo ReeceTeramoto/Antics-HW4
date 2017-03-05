@@ -60,10 +60,7 @@ def getRandPoint(x1, x2, y1, y2):
 #   playerId - The id of the player.
 ##
 class AIPlayer(Player):
-
-    # the number of genes in a population
-    populationSize = 5
-
+    
     #__init__
     #Description: Creates a new Player
     #
@@ -78,6 +75,9 @@ class AIPlayer(Player):
 
         # An index to track which gene in the population is next to be evaluated
         self.nextGeneIdx = 0
+
+        # the number of genes in a population
+        self.populationSize = 5
 
         # A second list to store the fitness of each gene in the current population
         # self.geneFitnesses = []
@@ -186,11 +186,12 @@ class AIPlayer(Player):
     #Parameters:
     #   gene1 - the first parent gene
     #   gene2 - the second parent gene
-    def mateGenes(gene1, gene2):
+    #   desiredChildren - the number of children that will be produced
+    def mateGenes(self, gene1, gene2, desiredChildren):
 
         mutationProbability = 0.001 # 1 in 1000
 
-        numChildren = 2
+        numChildren = desiredChildren
 
         # get the unique anthill and tunnel locations of the two parents
         anthillTunnelPool = [gene1.anthill, gene1.tunnel, gene2.anthill, gene2.tunnel]
@@ -260,47 +261,111 @@ class AIPlayer(Player):
     #
     # Return:
     # a list of genes representing the new generation
-    def generateNextGen(oldGen):
+    def generateNextGen(self, oldGen):
+
+        # sort old generation in order of highest->lowest fitness
+        oldGen.sort(key=lambda x:x.fitness, reverse=True)
+
+        # get the 2 genes with the highest fitness
+        parent1 = oldGen[0]
+        parent2 = oldGen[1]
 
         # return a list of genes representing the new generation
-        return
+        return self.mateGenes(parent1, parent2, self.populationSize)
 
-    print "Testing Gene Mating:\n"
-    print "Creating parent1: \n\tnewAnthill=(0,0) \n\tnewTunnel=(0,1) \n\t" + \
-                                  "newGrass = [(0,2),(0,3),(0,4),(0,5),(0,6),(0,7),(0,8),(0,9),(1,0)] \n\t" + \
-                                  "newFood = [(9,9),(9,8)]"
-    parent1Anthill = (0,0)
-    parent1Tunnel = (0,1)
-    parent1Grass = [(0,2),(0,3),(0,4),(0,5),(0,6),(0,7),(0,8),(0,9),(1,0)]
-    parent1Food = [(9,9),(9,8)]
-    parent1 = Gene(parent1Anthill, parent1Tunnel, parent1Grass, parent1Food)                             
-                                  
-    print "\nCreating parent2: \n\tnewAnthill=(1,1) \n\tnewTunnel=(1,2) \n\t" + \
-                                  "newGrass = [(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(2,0),(2,1)] \n\t" + \
-                                  "newFood = [(9,7),(9,6)]"
 
-    parent2Anthill = (1,1)
-    parent2Tunnel = (1,2)
-    parent2Grass = [(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(2,0),(2,1)]
-    parent2Food = [(9,7),(9,6)]
-    parent2 = Gene(parent2Anthill, parent2Tunnel, parent2Grass, parent2Food)
+newPlayer = AIPlayer(0)
 
-    print "\nMating two parents to get two children."
+# testing mateGenes() function
+print "\n- - - - - - - - - - - - - - - - - - - -"
+print "\nTesting Gene Mating:\n"
+print "Creating parent1: \n\tnewAnthill = (0,0) \n\tnewTunnel = (0,1) \n\t" + \
+                              "newGrass = [(0,2),(0,3),(0,4),(0,5),(0,6),(0,7),(0,8),(0,9),(1,0)] \n\t" + \
+                              "newFood = [(9,9),(9,8)]"
+parent1Anthill = (0,0)
+parent1Tunnel = (0,1)
+parent1Grass = [(0,2),(0,3),(0,4),(0,5),(0,6),(0,7),(0,8),(0,9),(1,0)]
+parent1Food = [(9,9),(9,8)]
+parent1 = Gene(parent1Anthill, parent1Tunnel, parent1Grass, parent1Food)                             
+                              
+print "\nCreating parent2: \n\tnewAnthill = (1,1) \n\tnewTunnel = (1,2) \n\t" + \
+                              "newGrass = [(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(2,0),(2,1)] \n\t" + \
+                              "newFood = [(9,7),(9,6)]"
 
-    children = mateGenes(parent1, parent2)
+parent2Anthill = (1,1)
+parent2Tunnel = (1,2)
+parent2Grass = [(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(2,0),(2,1)]
+parent2Food = [(9,7),(9,6)]
+parent2 = Gene(parent2Anthill, parent2Tunnel, parent2Grass, parent2Food)
 
-    print "\nChild 1:"
-    print "\tAnthill: " + str(children[0].anthill)
-    print "\tTunnel: " + str(children[0].tunnel)                              
-    print "\tGrass: " + str(children[0].grass)
-    print "\tFood: " + str(children[0].food)
+print "\nMating two parents to get two children."
 
-    print "\nChild 2:"
-    print "\tAnthill: " + str(children[1].anthill)
-    print "\tTunnel: " + str(children[1].tunnel)                              
-    print "\tGrass: " + str(children[1].grass)
-    print "\tFood: " + str(children[1].food)
+children = newPlayer.mateGenes(parent1, parent2, 2)
 
+print "\nChild 1:"
+print "\tAnthill: " + str(children[0].anthill)
+print "\tTunnel: " + str(children[0].tunnel)                              
+print "\tGrass: " + str(children[0].grass)
+print "\tFood: " + str(children[0].food)
+
+print "\nChild 2:"
+print "\tAnthill: " + str(children[1].anthill)
+print "\tTunnel: " + str(children[1].tunnel)                              
+print "\tGrass: " + str(children[1].grass)
+print "\tFood: " + str(children[1].food)
+# end of testing mateGenes() function
+
+
+# testing generateNextGen() function
+print "\n- - - - - - - - - - - - - - - - - - - -"
+print "\nTesting generateNextGen() function"
+print "\nCreating gene1: \n\tnewAnthill = (0,0) \n\tnewTunnel = (0,1) \n\t" + \
+                              "newGrass = [(0,2),(0,3),(0,4),(0,5),(0,6),(0,7),(0,8),(0,9),(1,0)] \n\t" + \
+                              "newFood = [(9,9),(9,8)] \n\t" + \
+                              "newFitness = 70"
+gene1Anthill = (0,0)
+gene1Tunnel = (0,1)
+gene1Grass = [(0,2),(0,3),(0,4),(0,5),(0,6),(0,7),(0,8),(0,9),(1,0)]
+gene1Food = [(9,9),(9,8)]
+gene1Fitness = 70
+gene1 = Gene(gene1Anthill, gene1Tunnel, gene1Grass, gene1Food, gene1Fitness)                             
+                              
+print "\nCreating gene2: \n\tnewAnthill = (1,1) \n\tnewTunnel = (1,2) \n\t" + \
+                              "newGrass = [(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(2,0),(2,1)] \n\t" + \
+                              "newFood = [(9,7),(9,6)] \n\t" + \
+                              "newFitness = 50"
+
+gene2Anthill = (1,1)
+gene2Tunnel = (1,2)
+gene2Grass = [(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(2,0),(2,1)]
+gene2Food = [(9,7),(9,6)]
+gene2Fitness = 50
+gene2 = Gene(gene2Anthill, gene2Tunnel, gene2Grass, gene2Food, gene2Fitness)
+
+print "\nCreating gene3: \n\tnewAnthill = (2,2) \n\tnewTunnel = (2,3) \n\t" + \
+                              "newGrass = [(2,4),(2,5),(2,6),(2,7),(2,8),(2,9),(3,1),(3,2),(3,3)] \n\t" + \
+                              "newFood = [(9,5),(9,4)] \n\t" + \
+                              "newFitness = 100"
+gene3Anthill = (2,2)
+gene3Tunnel = (2,3)
+gene3Grass = [(2,4),(2,5),(2,6),(2,7),(2,8),(2,9),(3,1),(3,2),(3,3)]
+gene3Food = [(9,5),(9,4)]
+gene3Fitness = 100
+gene3 = Gene(gene3Anthill, gene3Tunnel, gene3Grass, gene3Food, gene3Fitness)                             
+
+currentGen = [gene1, gene2, gene3]
+
+print "\nGenerating next generation: \n"
+
+nextGen = newPlayer.generateNextGen(currentGen)
+
+for idx,gene in enumerate(nextGen):
+    print "\nNextGen Gene " + str(idx) + ":"
+    print "\tAnthill: " + str(gene.anthill)
+    print "\tTunnel: " + str(gene.tunnel)                              
+    print "\tGrass: " + str(gene.grass)
+    print "\tFood: " + str(gene.food)
+# end of testing generateNextGen() function
 
 
 
