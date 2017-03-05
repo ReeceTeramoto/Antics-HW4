@@ -61,6 +61,9 @@ def getRandPoint(x1, x2, y1, y2):
 ##
 class AIPlayer(Player):
 
+    # the number of genes in a population
+    populationSize = 5
+
     #__init__
     #Description: Creates a new Player
     #
