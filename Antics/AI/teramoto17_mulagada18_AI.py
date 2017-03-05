@@ -106,7 +106,35 @@ class AIPlayer(Player):
     #       If setup phase 2: list of two 2-tuples of ints -> [(x1,y1), (x2,y2)]
     ##
     def getPlacement(self, currentState):
-       return None
+
+        # should contain the code that uses the current to-be-evaluated gene to
+        # define the layout it returns to the game
+
+        # nextGeneIdx will track which gene in the population is next to be evaluated
+        currentGene = genePopulation[nextGeneIdx]
+        
+        # if setup phase 1, list of eleven 2-tuples of ints (anthill, tunnel, all grass)
+        if currentState.phase == SETUP_PHASE_1:
+            rtn = []
+
+            # get anthill coord
+            rtn.append(currentGene.anthill)
+            
+            # get tunnel coord
+            rtn.append(currentGene.tunnel)
+
+            # get all grass coords
+            for grassCoord in currentGene.grass:
+                rtn.append(grassCoord)
+
+            return rtn
+
+        # if setup phase 2, list of two 2-tuples of ints (for food)
+        if currentState.phase == SETUP_PHASE_2:
+            # get both foods
+            return currentGene.food
+        
+        return None
     
     ##
     #getMove
