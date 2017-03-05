@@ -1,5 +1,6 @@
   # -*- coding: latin-1 -*-
 import random
+from random import shuffle
 import sys
 sys.path.append("..")  #so other modules can be found in parent dir
 from Player import *
@@ -18,6 +19,7 @@ from AIPlayerUtils import *
 #Variables:
 #   newAnthill, newTunnel - tuples of the anthill and tunnel
 #   newGrass - a list of tuples where the grass will be placed
+#   newFood - a list of tuples of the two enemy food locations
 #   newFitness - the fitness of the gene
 ##
 class Gene():
@@ -29,6 +31,24 @@ class Gene():
         self.food = newFood
         self.fitness = newFitness
 
+##
+#getRandPointOnMySide()
+#Description: returns an x-y tuple of a point on my side of the board
+# (x is between 0 and 9, y is between 0 and 3, inclusive)
+#
+# Param:
+#   x1, x2 - the range of random x coordinates
+#   y1, y2 - the range of random y coordinates
+#
+# Return: (x,y), the random point
+def getRandPoint(x1, x2, y1, y2):
+    # shuffle the list, replace the first element with an element
+    # on my side of the board
+    random.shuffle(anthillTunnelPool)
+
+    newLocationX = random.randint(x1,x2)
+    newLocationY = random.randint(y1,y2)
+    return (newLocationX, newLocationY)
 
 ##
 #AIPlayer
@@ -165,8 +185,68 @@ class AIPlayer(Player):
     #   gene2 - the second parent gene
     def mateGenes(gene1, gene2):
 
+        mutationProbability = 0.001 # 1 in 1000
+
+        numChildren = 2
+
+        # get the unique anthill and tunnel locations of the two parents
+        anthillTunnelPool = [gene1.anthill, gene1.tunnel, gene2.anthill, gene2.tunnel]
+        anthillTunnelPool = list(set(anthillTunnelPool))
+            
+        # get the unique grass of both parents
+        grassPool = gene1.grass + gene2.grass
+        grassPool = list(set(grassPool))
+
+        # get the unique enemy food of both parents
+        enemyFood = gene1.food + gene2.food
+        enemyFood = list(set(enemyFood))
+
+        # possible mutation to anthillTunnelPool
+        if random.random() < mutationProbability:
+            newCoord = getRandPoint(0, 9, 0, 3)
+            # make sure new coordinate isn't already in the setup
+            if newCoord not in anthillTunnelPool and newCoord not in grassPool:
+                anthillTunnelPool[0] = newCoord
+
+        # possible mutation on grass
+        if random.random() < mutationProbability:
+            newCoord = getRandPoint(0, 9, 0, 3)
+            # make sure new coordinate isn't already in the setup
+            if newCoord not in anthillTunnelPool and newCoord not in grassPool:
+                grassPool[0] = newCoord
+
+        
+
+        '''
+        # possible mutation on enemy food
+        if random.random() < mutationProbability:
+            newCoord = getRandPoint(0, 9, 6, 9)
+            # make sure new coordinate isn't already in the setup
+            if newCoord not in anthillTunnelPool and newCoord not in grassPool:
+                grassPool[0] = newCoord
+        '''
+
+        myChildren = []
+        
+        for i in range(numChildren):
+            # get anthill and tunnel positions for child
+            shuffle(anthillTunnelPool)
+            newAnthillPos = anthillTunnelPool[0]
+            newTunnelPos = anthillTunnelPool[1]
+
+            # get grass positions for child
+            shuffle(grassPool)
+            newGrass = grassPool[:9]
+
+            # get enemy food positions for child
+            shuffle(enemyFood)
+            newEnemyFood = enemyFood[:2]
+
+            myChildren.append(Gene(newAnthillPos, newTunnelPos, newGrass, newEnemyFood))         
+            
+            
         # return 2 child genes
-        pass
+        return myChildren
 
     ##
     #generateNextGen
@@ -180,4 +260,45 @@ class AIPlayer(Player):
     def generateNextGen(oldGen):
 
         # return a list of genes representing the new generation
-        pass
+        return
+
+    print "Testing Gene Mating:\n"
+    print "Creating parent1: \n\tnewAnthill=(0,0) \n\tnewTunnel=(0,1) \n\t" + \
+                                  "newGrass = [(0,2),(0,3),(0,4),(0,5),(0,6),(0,7),(0,8),(0,9),(1,0)] \n\t" + \
+                                  "newFood = [(9,9),(9,8)]"
+    parent1Anthill = (0,0)
+    parent1Tunnel = (0,1)
+    parent1Grass = [(0,2),(0,3),(0,4),(0,5),(0,6),(0,7),(0,8),(0,9),(1,0)]
+    parent1Food = [(9,9),(9,8)]
+    parent1 = Gene(parent1Anthill, parent1Tunnel, parent1Grass, parent1Food)                             
+                                  
+    print "\nCreating parent2: \n\tnewAnthill=(1,1) \n\tnewTunnel=(1,2) \n\t" + \
+                                  "newGrass = [(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(2,0),(2,1)] \n\t" + \
+                                  "newFood = [(9,7),(9,6)]"
+
+    parent2Anthill = (1,1)
+    parent2Tunnel = (1,2)
+    parent2Grass = [(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(2,0),(2,1)]
+    parent2Food = [(9,7),(9,6)]
+    parent2 = Gene(parent2Anthill, parent2Tunnel, parent2Grass, parent2Food)
+
+    print "\nMating two parents to get two children."
+
+    children = mateGenes(parent1, parent2)
+
+    print "\nChild 1:"
+    print "\tAnthill: " + str(children[0].anthill)
+    print "\tTunnel: " + str(children[0].tunnel)                              
+    print "\tGrass: " + str(children[0].grass)
+    print "\tFood: " + str(children[0].food)
+
+    print "\nChild 2:"
+    print "\tAnthill: " + str(children[1].anthill)
+    print "\tTunnel: " + str(children[1].tunnel)                              
+    print "\tGrass: " + str(children[1].grass)
+    print "\tFood: " + str(children[1].food)
+
+
+
+
+
