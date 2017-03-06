@@ -34,6 +34,7 @@ class Gene():
         # the number of games the gene has played
         self.numGames = 0
 
+
 ##
 #getRandPointOnMySide()
 #Description: returns an x-y tuple of a point on my side of the board
@@ -87,6 +88,8 @@ class AIPlayer(Player):
 
         # the number of games each gene will play for its fitness to be fully evaluated
         self.gamesPerGene = 10
+
+        self.initGenes()
 
 
 
