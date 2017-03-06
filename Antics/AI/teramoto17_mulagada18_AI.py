@@ -63,7 +63,7 @@ def getRandPoint(x1, x2, y1, y2):
 #   playerId - The id of the player.
 ##
 class AIPlayer(Player):
-    
+
     #__init__
     #Description: Creates a new Player
     #
@@ -87,7 +87,7 @@ class AIPlayer(Player):
 
         # the number of games each gene will play for its fitness to be fully evaluated
         self.gamesPerGene = 10
-        
+
 
     ##
     #getPlacement
@@ -121,14 +121,14 @@ class AIPlayer(Player):
 
         # nextGeneIdx will track which gene in the population is next to be evaluated
         currentGene = self.genePopulation[self.nextGeneIdx]
-        
+
         # if setup phase 1, list of eleven 2-tuples of ints (anthill, tunnel, all grass)
         if currentState.phase == SETUP_PHASE_1:
             rtn = []
 
             # get anthill coord
             rtn.append(currentGene.anthill)
-            
+
             # get tunnel coord
             rtn.append(currentGene.tunnel)
 
@@ -142,9 +142,9 @@ class AIPlayer(Player):
         if currentState.phase == SETUP_PHASE_2:
             # get both foods
             return currentGene.food
-        
+
         return None
-    
+
     ##
     #getMove
     #Description: The getMove method corresponds to the play phase of the game
@@ -232,19 +232,43 @@ class AIPlayer(Player):
                 # current index to the beginning
                 self.generateNextGen(self.genePopulation)
                 self.nextGeneIdx = 0
-        
+
 
     ##
     #initGenes
     #Description: initialize the population of genes with random values and reset the
     # fitness list to default values (set the fitness variable to 0).
     #
-    #Parameters:
-    #
-    #
-    def initGenes():
-        
-        pass
+    def initGenes(self):
+        moves = []
+        initGrass = []
+        initFood = []
+        initFitness = 0
+        for i in range(0,12):
+            xcoord = random.randint(0,9)
+            ycoord = random.randint(0,3)
+            if(xcoord, ycoord) not in moves:
+                if(i == 1):
+                    initAnthill = (xcoord, ycoord)
+                elif(i == 2):
+                    initTunnel = (xcoord, ycoord)
+                else:
+                    initGrass.append((xcoord, ycoord))
+                move = (xcoord, ycoord)
+                moves.append(move)
+        for j in range(0,2):
+            xcoord = random.randint(0,3)
+            ycoord = random.randint(0,9)
+            if (xcoord, ycoord) not in [(0,0), (5, 1),
+                    (0,3), (1,2), (2,1), (3,0), \
+                    (0,2), (1,1), (2,0), \
+                    (0,1), (1,0) ]:
+                initFood.append((xcoord, ycoord))
+                move = (xcoord, ycoord)
+                moves.append(move)
+
+        newGene = Gene(initAnthill, initTunnel, initGrass, initFood, initFitness)
+        self.genePopulation.append(newGene)
 
     ##
     #mateGenes
@@ -264,7 +288,7 @@ class AIPlayer(Player):
         # get the unique anthill and tunnel locations of the two parents
         anthillTunnelPool = [gene1.anthill, gene1.tunnel, gene2.anthill, gene2.tunnel]
         anthillTunnelPool = list(set(anthillTunnelPool))
-            
+
         # get the unique grass of both parents
         grassPool = gene1.grass + gene2.grass
         grassPool = list(set(grassPool))
@@ -287,7 +311,7 @@ class AIPlayer(Player):
             if newCoord not in anthillTunnelPool and newCoord not in grassPool:
                 grassPool[0] = newCoord
 
-        
+
 
         '''
         # possible mutation on enemy food
@@ -299,7 +323,7 @@ class AIPlayer(Player):
         '''
 
         myChildren = []
-        
+
         for i in range(numChildren):
             # get anthill and tunnel positions for child
             shuffle(anthillTunnelPool)
@@ -314,9 +338,9 @@ class AIPlayer(Player):
             shuffle(enemyFood)
             newEnemyFood = enemyFood[:2]
 
-            myChildren.append(Gene(newAnthillPos, newTunnelPos, newGrass, newEnemyFood))         
-            
-            
+            myChildren.append(Gene(newAnthillPos, newTunnelPos, newGrass, newEnemyFood))
+
+
         # return 2 child genes
         return myChildren
 
@@ -356,8 +380,8 @@ parent1Anthill = (0,0)
 parent1Tunnel = (0,1)
 parent1Grass = [(0,2),(0,3),(0,4),(0,5),(0,6),(0,7),(0,8),(0,9),(1,0)]
 parent1Food = [(9,9),(9,8)]
-parent1 = Gene(parent1Anthill, parent1Tunnel, parent1Grass, parent1Food)                             
-                              
+parent1 = Gene(parent1Anthill, parent1Tunnel, parent1Grass, parent1Food)
+
 print "\nCreating parent2: \n\tnewAnthill = (1,1) \n\tnewTunnel = (1,2) \n\t" + \
                               "newGrass = [(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(2,0),(2,1)] \n\t" + \
                               "newFood = [(9,7),(9,6)]"
@@ -374,13 +398,13 @@ children = newPlayer.mateGenes(parent1, parent2, 2)
 
 print "\nChild 1:"
 print "\tAnthill: " + str(children[0].anthill)
-print "\tTunnel: " + str(children[0].tunnel)                              
+print "\tTunnel: " + str(children[0].tunnel)
 print "\tGrass: " + str(children[0].grass)
 print "\tFood: " + str(children[0].food)
 
 print "\nChild 2:"
 print "\tAnthill: " + str(children[1].anthill)
-print "\tTunnel: " + str(children[1].tunnel)                              
+print "\tTunnel: " + str(children[1].tunnel)
 print "\tGrass: " + str(children[1].grass)
 print "\tFood: " + str(children[1].food)
 # end of testing mateGenes() function
@@ -398,8 +422,8 @@ gene1Tunnel = (0,1)
 gene1Grass = [(0,2),(0,3),(0,4),(0,5),(0,6),(0,7),(0,8),(0,9),(1,0)]
 gene1Food = [(9,9),(9,8)]
 gene1Fitness = 70
-gene1 = Gene(gene1Anthill, gene1Tunnel, gene1Grass, gene1Food, gene1Fitness)                             
-                              
+gene1 = Gene(gene1Anthill, gene1Tunnel, gene1Grass, gene1Food, gene1Fitness)
+
 print "\nCreating gene2: \n\tnewAnthill = (1,1) \n\tnewTunnel = (1,2) \n\t" + \
                               "newGrass = [(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(2,0),(2,1)] \n\t" + \
                               "newFood = [(9,7),(9,6)] \n\t" + \
@@ -421,7 +445,7 @@ gene3Tunnel = (2,3)
 gene3Grass = [(2,4),(2,5),(2,6),(2,7),(2,8),(2,9),(3,1),(3,2),(3,3)]
 gene3Food = [(9,5),(9,4)]
 gene3Fitness = 100
-gene3 = Gene(gene3Anthill, gene3Tunnel, gene3Grass, gene3Food, gene3Fitness)                             
+gene3 = Gene(gene3Anthill, gene3Tunnel, gene3Grass, gene3Food, gene3Fitness)
 
 currentGen = [gene1, gene2, gene3]
 
@@ -432,11 +456,15 @@ nextGen = newPlayer.generateNextGen(currentGen)
 for idx,gene in enumerate(nextGen):
     print "\nNextGen Gene " + str(idx) + ":"
     print "\tAnthill: " + str(gene.anthill)
-    print "\tTunnel: " + str(gene.tunnel)                              
+    print "\tTunnel: " + str(gene.tunnel)
     print "\tGrass: " + str(gene.grass)
     print "\tFood: " + str(gene.food)
 # end of testing generateNextGen() function
 
-
-
-
+print "TESTING INITGENES"
+newPlayer.initGenes()
+for i in newPlayer.genePopulation:
+    print "\tAnthill: " + str(i.anthill)
+    print "\tTunnel: " + str(i.tunnel)
+    print "\tGrass: " + str(i.grass)
+    print "\tFood: " + str(i.food)
