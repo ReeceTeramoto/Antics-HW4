@@ -173,7 +173,17 @@ class AIPlayer(Player):
     #Return: Move(moveType [int], coordList [list of 2-tuples of ints], buildType [int]
     ##
     def getMove(self, currentState):
-        return None
+
+        # do a random move
+        moves = listAllLegalMoves(currentState)
+        selectedMove = moves[random.randint(0,len(moves) - 1)];
+
+        #don't do a build move if there are already 3+ ants
+        numAnts = len(currentState.inventories[currentState.whoseTurn].ants)
+        while (selectedMove.moveType == BUILD and numAnts >= 3):
+            selectedMove = moves[random.randint(0,len(moves) - 1)];
+            
+        return selectedMove
 
     ##
     #getAttack
@@ -195,7 +205,8 @@ class AIPlayer(Player):
     #Return: A coordinate that matches one of the entries of enemyLocations. ((int,int))
     ##
     def getAttack(self, currentState, attackingAnt, enemyLocations):
-        return None
+        #Attack a random enemy.
+        return enemyLocations[random.randint(0, len(enemyLocations) - 1)]
 
     ##
     #registerWin
