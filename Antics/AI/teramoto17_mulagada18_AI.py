@@ -87,7 +87,7 @@ class AIPlayer(Player):
         # self.geneFitnesses = []
 
         # the number of games each gene will play for its fitness to be fully evaluated
-        self.gamesPerGene = 10
+        self.gamesPerGene = 1
 
         self.initGenes()
 
@@ -238,9 +238,9 @@ class AIPlayer(Player):
             currentGene.fitness -= 10
 
         # Judge whether the current gene's fitness has been fully evaluated.
-        # A gene's fitness has been fully evaluated if the gene has played 10 games
+        # A gene's fitness has been fully evaluated if the gene has played (gamesPerGene) games
         currentGene.numGames += 1
-        if currentGene.numGames == 10:
+        if currentGene.numGames >= self.gamesPerGene:
             # the gene's fitness has been fully evaluated, so go to the next game
             self.nextGeneIdx += 1
 
@@ -356,6 +356,8 @@ class AIPlayer(Player):
 
         myChildren = []
 
+
+        # create each child gene
         for i in range(numChildren):
             # get anthill and tunnel positions for child
             shuffle(anthillTunnelPool)
