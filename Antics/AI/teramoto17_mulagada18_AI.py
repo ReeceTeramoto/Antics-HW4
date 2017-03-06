@@ -89,6 +89,7 @@ class AIPlayer(Player):
         self.gamesPerGene = 10
 
 
+
     ##
     #getPlacement
     #
@@ -113,13 +114,12 @@ class AIPlayer(Player):
     ##
     def getPlacement(self, currentState):
 
-       return None
-
-
         # should contain the code that uses the current to-be-evaluated gene to
         # define the layout it returns to the game
 
         # nextGeneIdx will track which gene in the population is next to be evaluated
+        print "population size: " + str(len(self.genePopulation))
+        print "nextGeneIdx: " + str(self.nextGeneIdx)
         currentGene = self.genePopulation[self.nextGeneIdx]
 
         # if setup phase 1, list of eleven 2-tuples of ints (anthill, tunnel, all grass)
