@@ -268,10 +268,10 @@ class AIPlayer(Player):
         for j in range(0,2):
             xcoord1 = random.randint(0,9)
             ycoord1 = random.randint(6,9)
-            booger = [(0,0), (5, 1),
-                    (0,3), (1,2), (2,1), (3,0), \
-                    (0,2), (1,1), (2,0), \
-                    (0,1), (1,0)]
+            booger = [(9,9), (8, 9),
+                    (7,9), (6,9), (9,8), (9,7), \
+                    (9,6), (8,8), (8,7), \
+                    (7,8), (4,8)]
             if (xcoord1, ycoord1) not in booger:
                 initFood.append((xcoord1, ycoord1))
                 move = (xcoord1, ycoord1)
