@@ -144,6 +144,10 @@ class AIPlayer(Player):
         # if setup phase 2, list of two 2-tuples of ints (for food)
         if currentState.phase == SETUP_PHASE_2:
             # get both foods
+
+            print "PRINTING FOOD COORDS"
+            print str(currentGene.food[0])
+            print str(currentGene.food[1])
             return currentGene.food
 
         return None
@@ -262,15 +266,15 @@ class AIPlayer(Player):
                 move = (xcoord, ycoord)
                 moves.append(move)
         for j in range(0,2):
-            xcoord = random.randint(0,3)
-            ycoord = random.randint(0,9)
+            xcoord1 = random.randint(0,9)
+            ycoord1 = random.randint(6,9)
             booger = [(0,0), (5, 1),
                     (0,3), (1,2), (2,1), (3,0), \
                     (0,2), (1,1), (2,0), \
                     (0,1), (1,0)]
-            if (xcoord, ycoord) not in booger:
-                initFood.append((xcoord, ycoord))
-                move = (xcoord, ycoord)
+            if (xcoord1, ycoord1) not in booger:
+                initFood.append((xcoord1, ycoord1))
+                move = (xcoord1, ycoord1)
                 booger.append(move)
 
         newGene = Gene(initAnthill, initTunnel, initGrass, initFood, initFitness)
