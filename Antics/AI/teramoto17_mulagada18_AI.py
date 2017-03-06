@@ -243,6 +243,8 @@ class AIPlayer(Player):
         moves = []
         initGrass = []
         initFood = []
+        initAnthill = None
+        initTunnel = None
         initFitness = 0
         for i in range(0,12):
             xcoord = random.randint(0,9)
@@ -259,13 +261,14 @@ class AIPlayer(Player):
         for j in range(0,2):
             xcoord = random.randint(0,3)
             ycoord = random.randint(0,9)
-            if (xcoord, ycoord) not in [(0,0), (5, 1),
+            booger = [(0,0), (5, 1),
                     (0,3), (1,2), (2,1), (3,0), \
                     (0,2), (1,1), (2,0), \
-                    (0,1), (1,0) ]:
+                    (0,1), (1,0)]
+            if (xcoord, ycoord) not in booger:
                 initFood.append((xcoord, ycoord))
                 move = (xcoord, ycoord)
-                moves.append(move)
+                booger.append(move)
 
         newGene = Gene(initAnthill, initTunnel, initGrass, initFood, initFitness)
         self.genePopulation.append(newGene)
