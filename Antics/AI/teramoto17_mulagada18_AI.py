@@ -31,6 +31,8 @@ class Gene():
         self.food = newFood
         self.fitness = newFitness
 
+        self.state = None
+
         # the number of games the gene has played
         self.numGames = 0
 
@@ -48,7 +50,7 @@ class Gene():
 def getRandPoint(x1, x2, y1, y2):
     # shuffle the list, replace the first element with an element
     # on my side of the board
-    random.shuffle(anthillTunnelPool)
+    # random.shuffle(anthillTunnelPool)
 
     newLocationX = random.randint(x1,x2)
     newLocationY = random.randint(y1,y2)
@@ -121,8 +123,8 @@ class AIPlayer(Player):
         # define the layout it returns to the game
 
         # nextGeneIdx will track which gene in the population is next to be evaluated
-        print "population size: " + str(len(self.genePopulation))
-        print "nextGeneIdx: " + str(self.nextGeneIdx)
+        # print "population size: " + str(len(self.genePopulation))
+        # print "nextGeneIdx: " + str(self.nextGeneIdx)
         currentGene = self.genePopulation[self.nextGeneIdx]
 
         # if setup phase 1, list of eleven 2-tuples of ints (anthill, tunnel, all grass)
@@ -148,6 +150,17 @@ class AIPlayer(Player):
             # print "PRINTING FOOD COORDS"
             # print str(currentGene.food[0])
             # print str(currentGene.food[1])
+
+            # save the state to the current gene
+            stateCopy = currentState.clone()
+            
+            
+            # add in the food we are about to return
+            stateCopy.inventories[2].constrs.append(Construction(currentGene.food[0], FOOD))
+            stateCopy.inventories[2].constrs.append(Construction(currentGene.food[1], FOOD))
+
+            self.genePopulation[self.nextGeneIdx].state = stateCopy.clone()
+            
             return currentGene.food
 
         return None
@@ -245,7 +258,16 @@ class AIPlayer(Player):
             self.nextGeneIdx += 1
 
             # if all genes have been fully evaluated,
-            if self.nextGeneIdx == size(self.genePopulation):
+            if self.nextGeneIdx == len(self.genePopulation):
+
+                # print the gene layout of the gene with the highest fitness
+                # sort reverse by fitness
+                self.genePopulation.sort(key=lambda x:x.fitness, reverse=True)
+                # get the gene with the highest fitness
+                highestFitnessGene = self.genePopulation[0]
+
+                asciiPrintState(highestFitnessGene.state)
+                
                 # create a new population using the fittest ones and reset the
                 # current index to the beginning
                 self.generateNextGen(self.genePopulation)
@@ -394,7 +416,13 @@ class AIPlayer(Player):
 
         # get the 2 genes with the highest fitness
         parent1 = oldGen[0]
-        parent2 = oldGen[1]
+        parent2 = None
+
+        # handle the case where the generation only has one gene (base case testing)
+        if len(oldGen) > 1:
+            parent2 = oldGen[1]
+        else:
+            parent2 = oldGen[0]
 
         # return a list of genes representing the new generation
         newGen = self.mateGenes(parent1, parent2, self.populationSize)
