@@ -338,7 +338,7 @@ class AIPlayer(Player):
     #   desiredChildren - the number of children that will be produced
     def mateGenes(self, gene1, gene2, desiredChildren):
 
-        mutationProbability = 0.001 # 1 in 1000
+        mutationProbability = 0.01 # 1 in 100
 
         numChildren = desiredChildren
 
@@ -368,16 +368,18 @@ class AIPlayer(Player):
             if newCoord not in anthillTunnelPool and newCoord not in grassPool:
                 grassPool[0] = newCoord
 
-
-
-        '''
+        boogerCoords = [(9,9), (8,9), \
+                (7,9), (6,9), (9,8), (9,7), \
+                (9,6), (8,8), (8,7), \
+                (7,8), (4,8)]
+        
         # possible mutation on enemy food
         if random.random() < mutationProbability:
             newCoord = getRandPoint(0, 9, 6, 9)
             # make sure new coordinate isn't already in the setup
-            if newCoord not in anthillTunnelPool and newCoord not in grassPool:
-                grassPool[0] = newCoord
-        '''
+            if newCoord not in boogerCoords:
+                enemyFood[0] = newCoord
+        
 
         myChildren = []
 
