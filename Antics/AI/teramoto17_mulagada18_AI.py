@@ -83,7 +83,7 @@ class AIPlayer(Player):
         self.nextGeneIdx = 0
 
         # the number of genes in a population
-        self.populationSize = 5
+        self.populationSize = 3
 
         # A second list to store the fitness of each gene in the current population
         # self.geneFitnesses = []
@@ -290,39 +290,42 @@ class AIPlayer(Player):
                 (7,9), (6,9), (9,8), (9,7), \
                 (9,6), (8,8), (8,7), \
                 (7,8), (4,8)]
-        for i in range(0,12):
-            move = None
-            while move == None:
-                xcoord = random.randint(0,9)
-                ycoord = random.randint(0,3)
-                if(xcoord, ycoord) not in moves:
-                    if(i == 1):
-                        initAnthill = (xcoord, ycoord)
-                    elif(i == 2):
-                        initTunnel = (xcoord, ycoord)
-                    else:
-                        initGrass.append((xcoord, ycoord))
-                    move = (xcoord, ycoord)
-                    # print str(move)
-                    moves.append(move)
-                    # print "MOVES LIST"
-                    # print str(moves)
-        for i in range(0,2):
-            move = None
-            while move == None:
-                xcoord = random.randint(0,9)
-                ycoord = random.randint(6,9)
-                if (xcoord, ycoord) not in booger:
-                    initFood.append((xcoord, ycoord))
-                    move = (xcoord, ycoord)
-                    # print "FOOD COORDS FROM INITGENES FUNCTION"
-                    # print str(move1)
-                    booger.append(move)
-                    # print "BOOGER LIST"
-                    # print str(booger)
 
-        newGene = Gene(initAnthill, initTunnel, initGrass, initFood, initFitness)
-        self.genePopulation.append(newGene)
+        for count in range(self.populationSize):
+        
+            for i in range(0,12):
+                move = None
+                while move == None:
+                    xcoord = random.randint(0,9)
+                    ycoord = random.randint(0,3)
+                    if(xcoord, ycoord) not in moves:
+                        if(i == 1):
+                            initAnthill = (xcoord, ycoord)
+                        elif(i == 2):
+                            initTunnel = (xcoord, ycoord)
+                        else:
+                            initGrass.append((xcoord, ycoord))
+                        move = (xcoord, ycoord)
+                        # print str(move)
+                        moves.append(move)
+                        # print "MOVES LIST"
+                        # print str(moves)
+            for i in range(0,2):
+                move = None
+                while move == None:
+                    xcoord = random.randint(0,9)
+                    ycoord = random.randint(6,9)
+                    if (xcoord, ycoord) not in booger:
+                        initFood.append((xcoord, ycoord))
+                        move = (xcoord, ycoord)
+                        # print "FOOD COORDS FROM INITGENES FUNCTION"
+                        # print str(move1)
+                        booger.append(move)
+                        # print "BOOGER LIST"
+                        # print str(booger)
+
+            newGene = Gene(initAnthill, initTunnel, initGrass, initFood, initFitness)
+            self.genePopulation.append(newGene)
 
     ##
     #mateGenes
