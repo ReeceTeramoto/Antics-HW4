@@ -280,18 +280,20 @@ class AIPlayer(Player):
     # fitness list to default values (set the fitness variable to 0).
     #
     def initGenes(self):
-        moves = []
-        initGrass = []
-        initFood = []
-        initAnthill = None
-        initTunnel = None
-        initFitness = 0
-        booger = [(9,9), (8,9), \
-                (7,9), (6,9), (9,8), (9,7), \
-                (9,6), (8,8), (8,7), \
-                (7,8), (4,8)]
+
 
         for count in range(self.populationSize):
+
+            moves = []
+            initGrass = []
+            initFood = []
+            initAnthill = None
+            initTunnel = None
+            initFitness = 0
+            booger = [(9,9), (8,9), \
+                    (7,9), (6,9), (9,8), (9,7), \
+                    (9,6), (8,8), (8,7), \
+                    (7,8), (4,8)]
         
             for i in range(0,12):
                 move = None
