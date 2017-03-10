@@ -83,13 +83,13 @@ class AIPlayer(Player):
         self.nextGeneIdx = 0
 
         # the number of genes in a population
-        self.populationSize = 3
+        self.populationSize = 20
 
         # A second list to store the fitness of each gene in the current population
         # self.geneFitnesses = []
 
         # the number of games each gene will play for its fitness to be fully evaluated
-        self.gamesPerGene = 1
+        self.gamesPerGene = 20
 
         self.initGenes()
 
@@ -153,14 +153,14 @@ class AIPlayer(Player):
 
             # save the state to the current gene
             stateCopy = currentState.clone()
-            
-            
+
+
             # add in the food we are about to return
             stateCopy.inventories[2].constrs.append(Construction(currentGene.food[0], FOOD))
             stateCopy.inventories[2].constrs.append(Construction(currentGene.food[1], FOOD))
 
             self.genePopulation[self.nextGeneIdx].state = stateCopy.clone()
-            
+
             return currentGene.food
 
         return None
@@ -188,14 +188,17 @@ class AIPlayer(Player):
     def getMove(self, currentState):
 
         # do a random move
-        moves = listAllLegalMoves(currentState)
+        try:
+            moves = listAllLegalMoves(currentState)
+        except:
+            return Move(END, None, None)
         selectedMove = moves[random.randint(0,len(moves) - 1)];
 
         #don't do a build move if there are already 3+ ants
         numAnts = len(currentState.inventories[currentState.whoseTurn].ants)
         while (selectedMove.moveType == BUILD and numAnts >= 3):
             selectedMove = moves[random.randint(0,len(moves) - 1)];
-            
+
         return selectedMove
 
     ##
@@ -267,7 +270,7 @@ class AIPlayer(Player):
                 highestFitnessGene = self.genePopulation[0]
 
                 asciiPrintState(highestFitnessGene.state)
-                
+
                 # create a new population using the fittest ones and reset the
                 # current index to the beginning
                 self.generateNextGen(self.genePopulation)
@@ -280,19 +283,21 @@ class AIPlayer(Player):
     # fitness list to default values (set the fitness variable to 0).
     #
     def initGenes(self):
-        moves = []
-        initGrass = []
-        initFood = []
-        initAnthill = None
-        initTunnel = None
-        initFitness = 0
-        booger = [(9,9), (8,9), \
-                (7,9), (6,9), (9,8), (9,7), \
-                (9,6), (8,8), (8,7), \
-                (7,8), (4,8)]
+
 
         for count in range(self.populationSize):
-        
+
+            moves = []
+            initGrass = []
+            initFood = []
+            initAnthill = None
+            initTunnel = None
+            initFitness = 0
+            booger = [(9,9), (8,9), \
+                    (7,9), (6,9), (9,8), (9,7), \
+                    (9,6), (8,8), (8,7), \
+                    (7,8), (4,8)]
+
             for i in range(0,12):
                 move = None
                 while move == None:
@@ -372,14 +377,14 @@ class AIPlayer(Player):
                 (7,9), (6,9), (9,8), (9,7), \
                 (9,6), (8,8), (8,7), \
                 (7,8), (4,8)]
-        
+
         # possible mutation on enemy food
         if random.random() < mutationProbability:
             newCoord = getRandPoint(0, 9, 6, 9)
             # make sure new coordinate isn't already in the setup
             if newCoord not in boogerCoords:
                 enemyFood[0] = newCoord
-        
+
 
         myChildren = []
 
